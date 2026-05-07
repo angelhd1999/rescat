@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1a1a2e">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Rescat – Anagrames</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="stat-box">
+      <span class="stat-label">PUNTS</span>
+      <span class="stat-value" id="score">0</span>
+    </div>
+    <div class="brand">
+      <span class="brand-main">RESCAT</span>
+      <span class="brand-sub">Anagrames</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-label">TEMPS</span>
+      <span class="stat-value" id="timer">3:00</span>
+    </div>
+  </header>
+
+  <!-- Base word tiles -->
+  <section class="base-section">
+    <div class="base-header">
+      <p class="section-label">Paraula base</p>
+      <button class="btn-shuffle" id="btn-shuffle" aria-label="Barreja les lletres">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+        Barreja
+      </button>
+    </div>
+    <div class="base-tiles" id="base-tiles"></div>
+  </section>
+
+  <!-- Current word being built -->
+  <section class="build-section">
+    <div class="current-word" id="current-word">
+      <span class="hint-text">Toca les lletres per formar una paraula</span>
+    </div>
+    <div class="build-controls">
+      <button class="btn btn-clear" id="btn-clear" aria-label="Esborra">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>
+        Esborra
+      </button>
+      <button class="btn btn-submit" id="btn-submit" aria-label="Confirma">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Confirma
+      </button>
+    </div>
+    <div class="message-area" id="message" aria-live="polite"></div>
+  </section>
+
+  <!-- Progress bar (minimum words found) -->
+  <section class="progress-section">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+    <span class="progress-label" id="progress-label">0 paraules</span>
+  </section>
+
+  <!-- Found words -->
+  <section class="found-section">
+    <h2 class="found-title">Paraules trobades</h2>
+    <div class="found-list" id="found-list"></div>
+  </section>
+
+  <!-- Game Over overlay -->
+  <div class="overlay hidden" id="overlay-gameover">
+    <div class="overlay-card">
+      <h2 class="overlay-title">Temps!</h2>
+      <div class="final-stats">
+        <div class="final-stat">
+          <span class="final-stat-val" id="final-score">0</span>
+          <span class="final-stat-label">punts</span>
+        </div>
+        <div class="final-stat">
+          <span class="final-stat-val" id="final-words">0</span>
+          <span class="final-stat-label">paraules</span>
+        </div>
+      </div>
+      <p class="missed-label" id="missed-label"></p>
+      <div class="missed-words" id="missed-words"></div>
+      <button class="btn btn-newgame" id="btn-newgame">Nova partida</button>
+    </div>
+  </div>
+
+  <!-- Start overlay -->
+  <div class="overlay" id="overlay-start">
+    <div class="overlay-card">
+      <h1 class="start-title">RESCAT</h1>
+      <p class="start-subtitle">Anagrames</p>
+      <div class="rules">
+        <p>Forma paraules amb les lletres de la paraula base.</p>
+        <div class="score-table">
+          <div class="score-row"><span>3 lletres</span><span>1 pt</span></div>
+          <div class="score-row"><span>4 lletres</span><span>2 pts</span></div>
+          <div class="score-row"><span>5 lletres</span><span>5 pts</span></div>
+          <div class="score-row"><span>6 lletres</span><span>6 pts</span></div>
+          <div class="score-row"><span>7 lletres</span><span>7 pts</span></div>
+          <div class="score-row highlight"><span>8+ lletres</span><span>10+ pts</span></div>
+        </div>
+        <p class="rule-note">Tens 3 minuts. Cada lletra només es pot usar tantes vegades com apareix a la paraula base.</p>
+      </div>
+      <button class="btn btn-newgame" id="btn-start">Comença!</button>
+    </div>
+  </div>
+
+  <script src="js/dictionary-ca.js"></script>
+  <script src="js/base-words.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
