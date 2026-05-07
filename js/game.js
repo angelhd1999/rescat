@@ -2,8 +2,8 @@
 let state = {
   baseWord:     '',
   hint:         '',
-  tileOrder:    [],    // shuffled indices into baseWord
-  selected:     [],    // array of {letter, tileIdx}
+  tileOrder:    [],
+  selected:     [],
   found:        new Set(),
   score:        0,
   timerSecs:    180,
@@ -33,10 +33,10 @@ function canForm(word, base) {
 /* ─── Validation ─────────────────────────────────────────────────────────── */
 function validate(raw) {
   const word = normalise(raw);
-  if (word.length < 3)                           return { ok: false, msg: "Massa curta! (mínim 3 lletres)" };
-  if (!canForm(word, state.baseWord))            return { ok: false, msg: "Lletres no disponibles" };
-  if (!DICTIONARY.has(word))                     return { ok: false, msg: "No és al diccionari" };
-  if (state.found.has(word))                     return { ok: false, msg: "Ja l'has trobada!" };
+  if (word.length < 3)                return { ok: false, msg: "Massa curta! (mínim 3 lletres)" };
+  if (!canForm(word, state.baseWord)) return { ok: false, msg: "Lletres no disponibles" };
+  if (!DICTIONARY.has(word))          return { ok: false, msg: "No és al diccionari" };
+  if (state.found.has(word))          return { ok: false, msg: "Ja l'has trobada!" };
   return { ok: true, word };
 }
 
@@ -86,7 +86,6 @@ function updateTileStates() {
     const el = getTileElement(origIdx);
     if (!el) return;
     const isUsed = usedIdxSet.has(origIdx);
-    // Only apply .selected (orange) — .used would conflict via cascade
     el.classList.toggle('selected', isUsed);
     el.classList.remove('used');
     el.disabled = isUsed;
@@ -151,9 +150,8 @@ function submitWord() {
     return;
   }
 
-  // Accepted!
-  const word  = result.word;
-  const pts   = getScore(word.length);
+  const word = result.word;
+  const pts  = getScore(word.length);
   state.found.add(word);
   state.score += pts;
 
@@ -179,10 +177,9 @@ function updateScore() {
 }
 
 function updateProgress() {
-  const total   = state.found.size;
-  // Rough estimate: base word has ~10 expected findable words
-  const target  = Math.max(1, Math.floor(state.baseWord.length * 1.2));
-  const pct     = Math.min(100, Math.round((total / target) * 100));
+  const total  = state.found.size;
+  const target = Math.max(1, Math.floor(state.baseWord.length * 1.2));
+  const pct    = Math.min(100, Math.round((total / target) * 100));
   document.getElementById('progress-fill').style.width  = pct + '%';
   document.getElementById('progress-label').textContent = `${total} paraula${total !== 1 ? 'es' : ''}`;
 }
@@ -211,7 +208,6 @@ function shakeCurrentWord() {
 
 /* ─── Game flow ──────────────────────────────────────────────────────────── */
 function startGame() {
-  // Pick a random base word
   const entry       = BASE_WORDS[Math.floor(Math.random() * BASE_WORDS.length)];
   state.baseWord    = entry.word;
   state.hint        = entry.hint;
@@ -229,12 +225,9 @@ function startGame() {
   updateProgress();
   clearMessage();
   document.getElementById('found-list').innerHTML = '';
-
-  // Hide overlays
   document.getElementById('overlay-start').classList.add('hidden');
   document.getElementById('overlay-gameover').classList.add('hidden');
 
-  // Start timer
   clearInterval(state.timerHandle);
   startTimer();
 }
@@ -243,7 +236,6 @@ function endGame() {
   clearInterval(state.timerHandle);
   state.running = false;
 
-  // Find missed words (up to 10 short ones for display)
   const missed = findMissedWords().slice(0, 10);
 
   document.getElementById('final-score').textContent = state.score;
@@ -254,7 +246,7 @@ function endGame() {
   missedContainer.innerHTML = '';
 
   if (missed.length > 0) {
-    missedLabel.textContent = `Paraules que et van escapar`;
+    missedLabel.textContent = 'Paraules que et van escapar';
     missed.forEach(w => {
       const el = document.createElement('span');
       el.className   = 'missed-word';
@@ -262,7 +254,7 @@ function endGame() {
       missedContainer.appendChild(el);
     });
   } else {
-    missedLabel.textContent = '¡Increïble! Ho has trobat tot!';
+    missedLabel.textContent = 'Increïble! Ho has trobat tot!';
   }
 
   document.getElementById('overlay-gameover').classList.remove('hidden');
@@ -273,9 +265,7 @@ function findMissedWords() {
   for (const word of DICTIONARY) {
     if (state.found.has(word)) continue;
     if (word.length < 3 || word.length > 7) continue;
-    if (canForm(word, state.baseWord) && !state.found.has(word)) {
-      missed.push(word);
-    }
+    if (canForm(word, state.baseWord)) missed.push(word);
     if (missed.length >= 15) break;
   }
   return missed.sort((a, b) => b.length - a.length || a.localeCompare(b));
@@ -298,13 +288,11 @@ document.addEventListener('keydown', (e) => {
     if (state.selected.length > 0) removeLetter(state.selected.length - 1);
     return;
   }
-  if (e.key === 'Escape')    { clearSelection(); return; }
+  if (e.key === 'Escape') { clearSelection(); return; }
 
-  // Type a letter
   const ch = normalise(e.key);
   if (!/^[A-Z]$/.test(ch)) return;
 
-  // Find first unused tile with this letter
   const usedIdxSet = new Set(state.selected.map(s => s.tileIdx));
   const origIdx = state.tileOrder.find(
     i => state.baseWord[i] === ch && !usedIdxSet.has(i)
